@@ -20,6 +20,7 @@
   --line:#E4DCDF; --ink:#221C1F; --muted:#7C6E73;
   --accent:#8E3B55; --accent-ink:#FFFFFF; --accent-soft:#F4E7EC;
   --ok:#2F6B4F; --ok-soft:#E8F1EC;
+  --mal:#9B2C2C; --mal-soft:#FBEAEA;
   --f-display:"Marcellus", Georgia, "Times New Roman", serif;
   --f-body:"Karla", "Segoe UI", system-ui, sans-serif;
   --f-mono:"IBM Plex Mono", ui-monospace, "Consolas", monospace;
@@ -32,6 +33,7 @@
     --line:#352B30; --ink:#F1EAEC; --muted:#A3949A;
     --accent:#E890A8; --accent-ink:#2A121B; --accent-soft:#37222B;
     --ok:#74C79B; --ok-soft:#1F2F26;
+    --mal:#F09A9A; --mal-soft:#331E1E;
     color-scheme:dark;
   }
 }
@@ -40,6 +42,7 @@
   --line:#352B30; --ink:#F1EAEC; --muted:#A3949A;
   --accent:#E890A8; --accent-ink:#2A121B; --accent-soft:#37222B;
   --ok:#74C79B; --ok-soft:#1F2F26;
+  --mal:#F09A9A; --mal-soft:#331E1E;
   color-scheme:dark;
 }
 
@@ -53,11 +56,7 @@ body{
 img{max-width:100%}
 [hidden]{display:none !important}
 
-.wrap{
-  max-width:680px; margin:0 auto;
-  padding-inline:20px;
-  padding-block:40px 0;
-}
+.wrap{max-width:680px; margin:0 auto; padding-inline:20px; padding-block:40px 0}
 
 /* ---- Encabezado ---- */
 .masthead{text-align:center; padding-bottom:36px; border-bottom:1px solid var(--line)}
@@ -66,13 +65,22 @@ img{max-width:100%}
   font-size:clamp(2.1rem, 9vw, 3rem); line-height:1.05;
   margin:0 0 10px; letter-spacing:.01em; text-wrap:balance;
 }
-.tagline{
-  font-size:.7rem; text-transform:uppercase; letter-spacing:.18em;
-  color:var(--muted); margin:0;
+.tagline{font-size:.7rem; text-transform:uppercase; letter-spacing:.18em; color:var(--muted); margin:0}
+.lede{margin:22px auto 0; max-width:46ch; color:var(--muted); font-size:.95rem}
+
+/* ---- Avisos ---- */
+.aviso{
+  margin-top:24px; background:var(--accent-soft);
+  border:1px solid var(--accent); border-radius:var(--r);
+  padding:13px 16px; font-size:.88rem; color:var(--ink);
 }
-.lede{
-  margin:22px auto 0; max-width:46ch; color:var(--muted); font-size:.95rem;
+.alerta{
+  margin-top:24px; background:var(--mal-soft);
+  border:1px solid var(--mal); border-radius:var(--r);
+  padding:14px 16px; font-size:.88rem; color:var(--ink);
 }
+.alerta strong{display:block; margin-bottom:4px}
+.alerta a{color:var(--accent); font-weight:600}
 
 /* ---- Pasos ---- */
 .step{padding-block:34px; border-bottom:1px solid var(--line)}
@@ -80,8 +88,7 @@ img{max-width:100%}
 .step-head{display:flex; align-items:baseline; gap:12px; margin-bottom:6px}
 .step-num{
   font-family:var(--f-mono); font-size:.72rem; font-weight:500;
-  color:var(--accent); letter-spacing:.06em; flex:none;
-  padding-top:.2em;
+  color:var(--accent); letter-spacing:.06em; flex:none; padding-top:.2em;
 }
 .step-head h2{
   font-family:var(--f-display); font-weight:400;
@@ -92,10 +99,7 @@ img{max-width:100%}
 /* ---- Zonas ---- */
 .zone-group{margin-bottom:22px}
 .zone-group:last-child{margin-bottom:0}
-.zone-label{
-  font-size:.68rem; text-transform:uppercase; letter-spacing:.16em;
-  color:var(--muted); margin:0 0 10px;
-}
+.zone-label{font-size:.68rem; text-transform:uppercase; letter-spacing:.16em; color:var(--muted); margin:0 0 10px}
 .chips{display:flex; flex-wrap:wrap; gap:8px}
 .chip{
   font-family:inherit; font-size:.875rem; color:var(--ink);
@@ -105,8 +109,8 @@ img{max-width:100%}
 }
 .chip:hover{border-color:var(--accent)}
 .chip[aria-pressed="true"]{
-  background:var(--accent); border-color:var(--accent); color:var(--accent-ink);
-  font-weight:500;
+  background:var(--accent); border-color:var(--accent);
+  color:var(--accent-ink); font-weight:500;
 }
 
 /* ---- Fechas ---- */
@@ -119,14 +123,10 @@ img{max-width:100%}
   transition:border-color .14s, background .14s;
 }
 .date-card:hover{border-color:var(--accent)}
-.date-card .dow{
-  font-size:.66rem; text-transform:uppercase; letter-spacing:.14em; color:var(--muted);
-}
+.date-card .dow{font-size:.66rem; text-transform:uppercase; letter-spacing:.14em; color:var(--muted)}
 .date-card .dnum{font-family:var(--f-display); font-size:1.25rem; line-height:1.1}
 .date-card .dfree{font-family:var(--f-mono); font-size:.72rem; color:var(--muted)}
-.date-card[aria-pressed="true"]{
-  border-color:var(--accent); background:var(--accent-soft);
-}
+.date-card[aria-pressed="true"]{border-color:var(--accent); background:var(--accent-soft)}
 .date-card[aria-pressed="true"] .dow,
 .date-card[aria-pressed="true"] .dfree{color:var(--accent)}
 
@@ -140,7 +140,8 @@ img{max-width:100%}
 }
 .time:hover{border-color:var(--accent)}
 .time[aria-pressed="true"]{
-  background:var(--accent); border-color:var(--accent); color:var(--accent-ink); font-weight:500;
+  background:var(--accent); border-color:var(--accent);
+  color:var(--accent-ink); font-weight:500;
 }
 .time[disabled]{
   color:var(--muted); background:var(--surface-2); cursor:not-allowed;
@@ -160,14 +161,7 @@ img{max-width:100%}
 .field input:focus, .field textarea:focus{outline:none; border-color:var(--accent)}
 .field .hint{font-size:.78rem; color:var(--muted)}
 
-/* ---- Aviso ---- */
-.aviso{
-  margin-top:24px; background:var(--accent-soft);
-  border:1px solid var(--accent); border-radius:var(--r);
-  padding:13px 16px; font-size:.88rem; color:var(--ink);
-}
-
-/* ---- Estados vacíos / avisos ---- */
+/* ---- Estados vacíos ---- */
 .empty{
   background:var(--surface-2); border:1px dashed var(--line);
   border-radius:var(--r); padding:22px; color:var(--muted); font-size:.9rem;
@@ -182,8 +176,7 @@ img{max-width:100%}
 .summary{
   position:sticky; bottom:0; z-index:5;
   margin:34px -20px 0;
-  background:var(--surface);
-  border-top:1px solid var(--line);
+  background:var(--surface); border-top:1px solid var(--line);
   padding:14px 20px;
   padding-bottom:calc(14px + env(safe-area-inset-bottom, 0px));
   display:flex; align-items:center; gap:14px; flex-wrap:wrap;
@@ -195,33 +188,25 @@ img{max-width:100%}
   background:var(--accent); color:var(--accent-ink);
   border:1px solid var(--accent); border-radius:10px;
   padding:12px 22px; cursor:pointer; flex:none;
-  text-decoration:none; display:inline-block;
 }
-.cta[aria-disabled="true"]{
+.cta[aria-disabled="true"], .cta[disabled]{
   background:var(--surface-2); color:var(--muted);
   border-color:var(--line); cursor:not-allowed;
 }
 
-/* ---- Confirmación ---- */
-.done{
-  background:var(--ok-soft); border:1px solid var(--ok);
-  border-radius:var(--r); padding:20px; margin-top:20px;
-}
+/* ---- Resultado ---- */
+.done{background:var(--ok-soft); border:1px solid var(--ok); border-radius:var(--r); padding:20px; margin-top:20px}
 .done h3{font-family:var(--f-display); font-weight:400; font-size:1.15rem; margin:0 0 8px; color:var(--ink)}
 .done p{margin:0 0 10px; font-size:.9rem; color:var(--ink)}
 .done p:last-child{margin-bottom:0}
 .done a{color:var(--accent); font-weight:600}
+.fallo{background:var(--mal-soft); border-color:var(--mal)}
 
-footer{
-  padding-block:30px 40px; text-align:center;
-  font-size:.78rem; color:var(--muted);
-}
+footer{padding-block:30px 40px; text-align:center; font-size:.78rem; color:var(--muted)}
 footer .wa{font-family:var(--f-mono); color:var(--ink)}
 
 :focus-visible{outline:2px solid var(--accent); outline-offset:2px}
-@media (prefers-reduced-motion: reduce){
-  *{transition:none !important; animation:none !important}
-}
+@media (prefers-reduced-motion: reduce){ *{transition:none !important; animation:none !important} }
 </style>
 </head>
 <body>
@@ -231,17 +216,15 @@ footer .wa{font-family:var(--f-mono); color:var(--ink)}
   <header class="masthead">
     <h1 id="brandName">Depi Nath</h1>
     <p class="tagline" id="brandTag">Depilación definitiva · Estética integral</p>
-    <p class="lede">Elegí las zonas, el sábado y el horario. Al confirmar se abre WhatsApp con el mensaje ya escrito y yo te respondo para cerrar el turno.</p>
+    <p class="lede">Elegí las zonas, el sábado y el horario. El turno te queda reservado al instante y se abre WhatsApp para que te lo confirme.</p>
   </header>
 
   <div id="aviso" class="aviso" hidden></div>
+  <div id="alerta" class="alerta" hidden></div>
 
   <!-- 1. Zonas -->
   <section class="step">
-    <div class="step-head">
-      <span class="step-num">01</span>
-      <h2>Zonas a tratar</h2>
-    </div>
+    <div class="step-head"><span class="step-num">01</span><h2>Zonas a tratar</h2></div>
     <p class="step-note">Podés marcar todas las que necesites.</p>
     <div id="zones"></div>
     <p class="inline-note">Cada turno dura 20 minutos. Si marcás varias zonas puede que necesitemos más tiempo: te lo confirmo por WhatsApp cuando me escribas.</p>
@@ -249,10 +232,7 @@ footer .wa{font-family:var(--f-mono); color:var(--ink)}
 
   <!-- 2. Fecha -->
   <section class="step">
-    <div class="step-head">
-      <span class="step-num">02</span>
-      <h2>Día</h2>
-    </div>
+    <div class="step-head"><span class="step-num">02</span><h2>Día</h2></div>
     <p class="step-note">Atiendo el primer y el tercer sábado de cada mes.</p>
     <div id="dates" class="dates"></div>
     <div id="datesEmpty" class="empty" hidden>
@@ -263,20 +243,14 @@ footer .wa{font-family:var(--f-mono); color:var(--ink)}
 
   <!-- 3. Horario -->
   <section class="step">
-    <div class="step-head">
-      <span class="step-num">03</span>
-      <h2>Horario</h2>
-    </div>
+    <div class="step-head"><span class="step-num">03</span><h2>Horario</h2></div>
     <p class="step-note" id="timesNote">Elegí primero un día.</p>
     <div id="times" class="times"></div>
   </section>
 
   <!-- 4. Datos -->
   <section class="step">
-    <div class="step-head">
-      <span class="step-num">04</span>
-      <h2>Tus datos</h2>
-    </div>
+    <div class="step-head"><span class="step-num">04</span><h2>Tus datos</h2></div>
     <p class="step-note">Para poder confirmarte el turno.</p>
     <form class="fields" id="form" novalidate>
       <div class="field">
@@ -293,16 +267,17 @@ footer .wa{font-family:var(--f-mono); color:var(--ink)}
         <textarea id="nota" name="nota" placeholder="Primera vez, embarazo, alguna consulta..."></textarea>
       </div>
     </form>
+
     <div id="done" class="done" hidden>
-      <h3>Listo, te abrí WhatsApp</h3>
-      <p>Si no se abrió solo, <a id="doneLink" href="#" target="_blank" rel="noopener">tocá acá para enviarme el mensaje</a>.</p>
-      <p>El turno queda confirmado cuando te respondo. Si no te contesto en el día, volvé a escribirme.</p>
+      <h3 id="doneTitle">Turno reservado</h3>
+      <p id="doneMsg"></p>
+      <p id="doneLinkWrap">Si WhatsApp no se abrió solo, <a id="doneLink" href="#" target="_blank" rel="noopener">tocá acá para mandarme el mensaje</a>.</p>
     </div>
   </section>
 
   <div class="summary">
-    <div class="summary-text" id="summaryText">Elegí zonas, día y horario.</div>
-    <button class="cta" id="cta" type="button" aria-disabled="true">Reservar por WhatsApp</button>
+    <div class="summary-text" id="summaryText">Cargando la agenda...</div>
+    <button class="cta" id="cta" type="button" aria-disabled="true">Reservar turno</button>
   </div>
 
   <footer>
@@ -312,60 +287,59 @@ footer .wa{font-family:var(--f-mono); color:var(--ink)}
 
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script>
 /* ============================================================
-   CONFIGURACIÓN — es lo único que tenés que tocar.
+   CONFIGURACIÓN
    ============================================================ */
 const CONFIG = {
   nombre:   "Depi Nath",
   bajada:   "Depilación definitiva · Estética integral",
 
-  // Número de WhatsApp, solo dígitos, con código de país y sin el 0 ni el 15.
-  whatsapp:        "5491162511587",
+  whatsapp:        "5491162511587",   // solo dígitos, con código de país
   whatsappVisible: "+54 9 11 6251-1587",
 
-  // 0 = domingo, 1 = lunes ... 6 = sábado
-  diaSemana:    6,
-  // Qué semanas del mes. [1,3] = primer y tercer sábado.
-  semanasDelMes: [1, 3],
+  // --- Conexión con la base de datos -------------------------
+  supabaseUrl: "https://qcistptgeqskkstljuqx.supabase.co",
+  supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFjaXN0cHRnZXFza2tzdGxqdXF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTEzMTU0NzMsImV4cCI6MjEwNjg5MTQ3M30.c2Wl77-j_U5cLNUEPwDy-MbLTDer4CByt485LrcM1dw",
+  // -----------------------------------------------------------
 
-  horaDesde:   "08:00",
-  horaHasta:   "19:00",
-  intervaloMin: 20,
+  diaSemana:     6,       // 0 domingo ... 6 sábado
+  semanasDelMes: [1, 3],  // primer y tercer
 
-  anticipacionHoras: 24,  // no se puede reservar con menos de esto de anticipación
-  mesesAdelante:      2,  // hasta cuándo se abren los turnos
+  horaDesde:    "08:00",
+  horaHasta:    "19:00",
+  intervaloMin:  20,
 
-  // Zonas agrupadas. Agregá, saqué o renombrá lo que quieras.
+  anticipacionHoras: 24,
+  mesesAdelante:      2,
+
   zonas: {
-    "Rostro":       ["Bigote", "Mentón", "Patillas", "Entrecejo", "Rostro completo"],
+    "Rostro":          ["Bigote", "Mentón", "Patillas", "Entrecejo", "Rostro completo"],
     "Cuello y escote": ["Cuello", "Escote", "Nuca"],
-    "Brazos":       ["Axilas", "Medio brazo", "Brazo completo", "Manos"],
-    "Torso":        ["Pecho", "Areolas", "Abdomen", "Línea abdominal", "Espalda media", "Espalda completa", "Lumbares"],
-    "Zona bikini":  ["Cavado simple", "Cavado completo", "Tiro de cola", "Glúteos"],
-    "Piernas":      ["Media pierna", "Pierna completa", "Rodillas", "Pies"]
+    "Brazos":          ["Axilas", "Medio brazo", "Brazo completo", "Manos"],
+    "Torso":           ["Pecho", "Areolas", "Abdomen", "Línea abdominal", "Espalda media", "Espalda completa", "Lumbares"],
+    "Zona bikini":     ["Cavado simple", "Cavado completo", "Tiro de cola", "Glúteos"],
+    "Piernas":         ["Media pierna", "Pierna completa", "Rodillas", "Pies"]
   }
 };
 
-/* Argentina no usa horario de verano desde 2009, así que la zona es
-   siempre UTC-3. Anclamos los turnos ahí para que las cuentas de
-   anticipación den igual desde cualquier teléfono. */
+/* Argentina no usa horario de verano desde 2009: la zona es siempre
+   UTC-3. Anclamos los turnos ahí para que las cuentas de anticipación
+   den igual desde cualquier teléfono. */
 const AR_OFFSET_H = 3;
 
-/* Todo lo que cambia seguido se lee de agenda.json. Si el archivo no
-   está o tiene un error, la página sigue funcionando con la agenda
-   normal y todo libre. */
-let ocupados     = new Set();  // horarios sueltos ya reservados
-let diasCerrados = new Set();  // sábados que no vas a atender
-let diasExtra    = [];         // sábados extra fuera del 1º y 3º
+const sb = supabase.createClient(CONFIG.supabaseUrl, CONFIG.supabaseKey);
+
+let ocupados     = new Set();
+let diasCerrados = new Set();
+let diasExtra    = [];
+let conectado    = false;
 
 /* ---------- utilidades de fecha ---------- */
 const pad = n => String(n).padStart(2, "0");
-
-function arInstant(y, m, d, hh, mm){          // -> milisegundos UTC
-  return Date.UTC(y, m, d, hh + AR_OFFSET_H, mm);
-}
-function diasDelMes(y, m){ return new Date(Date.UTC(y, m + 1, 0)).getUTCDate(); }
+const arInstant = (y, m, d, hh, mm) => Date.UTC(y, m, d, hh + AR_OFFSET_H, mm);
+const diasDelMes = (y, m) => new Date(Date.UTC(y, m + 1, 0)).getUTCDate();
 
 function fechasDelMes(y, m){
   const out = [];
@@ -380,16 +354,12 @@ function fechasDelMes(y, m){
   return out;
 }
 
-function parseHora(s){
-  const [h, m] = s.split(":").map(Number);
-  return { h, m };
-}
+const parseHora = s => { const [h, m] = s.split(":").map(Number); return { h, m }; };
 function listaHorarios(){
   const a = parseHora(CONFIG.horaDesde), b = parseHora(CONFIG.horaHasta);
   const out = [];
-  for (let t = a.h * 60 + a.m; t <= b.h * 60 + b.m; t += CONFIG.intervaloMin){
+  for (let t = a.h * 60 + a.m; t <= b.h * 60 + b.m; t += CONFIG.intervaloMin)
     out.push({ h: Math.floor(t / 60), m: t % 60, txt: pad(Math.floor(t / 60)) + ":" + pad(t % 60) });
-  }
   return out;
 }
 const HORARIOS = listaHorarios();
@@ -397,32 +367,25 @@ const HORARIOS = listaHorarios();
 const claveDia  = f => `${f.y}-${pad(f.m + 1)}-${pad(f.d)}`;
 const claveSlot = (f, hr) => `${claveDia(f)} ${hr.txt}`;
 
-const fmtLargo = new Intl.DateTimeFormat("es-AR", {
-  weekday: "long", day: "numeric", month: "long", timeZone: "UTC"
-});
-const fmtDow = new Intl.DateTimeFormat("es-AR", { weekday: "long", timeZone: "UTC" });
-const fmtDia = new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "long", timeZone: "UTC" });
+const fmtLargo = new Intl.DateTimeFormat("es-AR", { weekday:"long", day:"numeric", month:"long", timeZone:"UTC" });
+const fmtDow   = new Intl.DateTimeFormat("es-AR", { weekday:"long", timeZone:"UTC" });
+const fmtDia   = new Intl.DateTimeFormat("es-AR", { day:"numeric", month:"long", timeZone:"UTC" });
 
 function textoFecha(f, fmt){
   const s = fmt.format(new Date(Date.UTC(f.y, f.m, f.d)));
   return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
-/* ---------- ventana de reserva ---------- */
 function ventana(){
   const desde = Date.now() + CONFIG.anticipacionHoras * 3600 * 1000;
-  const h = new Date();
-  h.setMonth(h.getMonth() + CONFIG.mesesAdelante);
+  const h = new Date(); h.setMonth(h.getMonth() + CONFIG.mesesAdelante);
   return { desde, hasta: h.getTime() };
 }
 
-/* Los días que se ofrecen: los del patrón (1º y 3º sábado), más los
-   que agregues en diasExtra, menos los que pongas en diasCerrados. */
 function diasCandidatos(){
   const hoy = new Date();
   const vistos = new Set();
   const out = [];
-
   for (let i = 0; i <= CONFIG.mesesAdelante + 1; i++){
     const base = new Date(Date.UTC(hoy.getFullYear(), hoy.getMonth() + i, 1));
     for (const f of fechasDelMes(base.getUTCFullYear(), base.getUTCMonth())){
@@ -430,15 +393,13 @@ function diasCandidatos(){
       if (!vistos.has(k)){ vistos.add(k); out.push(f); }
     }
   }
-
   for (const s of diasExtra){
     const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(s).trim());
     if (!m) continue;
-    const f = { y: +m[1], m: +m[2] - 1, d: +m[3] };
+    const f = { y:+m[1], m:+m[2] - 1, d:+m[3] };
     const k = claveDia(f);
     if (!vistos.has(k)){ vistos.add(k); out.push(f); }
   }
-
   return out
     .filter(f => !diasCerrados.has(claveDia(f)))
     .sort((a, b) => Date.UTC(a.y, a.m, a.d) - Date.UTC(b.y, b.m, b.d));
@@ -457,12 +418,34 @@ function fechasDisponibles(){
   return out;
 }
 
-/* ---------- estado ---------- */
-const estado = { zonas: new Set(), fecha: null, hora: null };
+/* ---------- datos ---------- */
+async function cargarAgenda(){
+  const [oc, di, cf] = await Promise.all([
+    sb.from("ocupados").select("fecha,hora"),
+    sb.from("dias").select("fecha,tipo"),
+    sb.from("config").select("valor").eq("clave", "aviso").maybeSingle()
+  ]);
 
-/* ---------- render ---------- */
+  if (oc.error || di.error) throw (oc.error || di.error);
+
+  ocupados = new Set((oc.data || []).map(r => `${r.fecha} ${String(r.hora).slice(0, 5)}`));
+
+  diasCerrados = new Set((di.data || []).filter(r => r.tipo === "cerrado").map(r => r.fecha));
+  diasExtra    =         (di.data || []).filter(r => r.tipo === "extra"  ).map(r => r.fecha);
+
+  const texto = cf.data && cf.data.valor ? String(cf.data.valor).trim() : "";
+  const el = $("aviso");
+  el.textContent = texto;
+  el.hidden = !texto;
+
+  conectado = true;
+}
+
+/* ---------- estado ---------- */
+const estado = { zonas:new Set(), fecha:null, hora:null, enviando:false };
 const $ = id => document.getElementById(id);
 
+/* ---------- render ---------- */
 function renderZonas(){
   const cont = $("zones");
   cont.innerHTML = "";
@@ -477,9 +460,7 @@ function renderZonas(){
     row.className = "chips";
     for (const z of items){
       const b = document.createElement("button");
-      b.type = "button";
-      b.className = "chip";
-      b.textContent = z;
+      b.type = "button"; b.className = "chip"; b.textContent = z;
       b.setAttribute("aria-pressed", "false");
       b.addEventListener("click", () => {
         if (estado.zonas.has(z)) estado.zonas.delete(z); else estado.zonas.add(z);
@@ -497,44 +478,39 @@ function renderFechas(){
   const cont = $("dates");
   const libres = fechasDisponibles();
   cont.innerHTML = "";
-  $("datesEmpty").hidden = libres.length > 0;
+  $("datesEmpty").hidden = libres.length > 0 || !conectado;
 
   const elegida = estado.fecha ? claveDia(estado.fecha) : null;
-  let sigueDisponible = false;
+  let sigue = false;
 
   for (const f of libres){
     const b = document.createElement("button");
-    b.type = "button";
-    b.className = "date-card";
-    b.dataset.key = claveDia(f);
+    b.type = "button"; b.className = "date-card"; b.dataset.key = claveDia(f);
     b.innerHTML =
       `<span class="dow">${textoFecha(f, fmtDow)}</span>` +
       `<span class="dnum">${textoFecha(f, fmtDia)}</span>` +
       `<span class="dfree">${f.libres} horario${f.libres === 1 ? "" : "s"} libre${f.libres === 1 ? "" : "s"}</span>`;
 
-    const esElegida = claveDia(f) === elegida;
-    b.setAttribute("aria-pressed", esElegida ? "true" : "false");
-    if (esElegida){ estado.fecha = f; sigueDisponible = true; }
+    const esEsta = claveDia(f) === elegida;
+    b.setAttribute("aria-pressed", esEsta ? "true" : "false");
+    if (esEsta){ estado.fecha = f; sigue = true; }
 
     b.addEventListener("click", () => {
-      estado.fecha = f;
-      estado.hora = null;
+      estado.fecha = f; estado.hora = null;
       cont.querySelectorAll(".date-card").forEach(c => c.setAttribute("aria-pressed", "false"));
       b.setAttribute("aria-pressed", "true");
-      renderHorarios();
-      renderResumen();
+      renderHorarios(); renderResumen();
     });
     cont.appendChild(b);
   }
-
-  if (elegida && !sigueDisponible){ estado.fecha = null; estado.hora = null; }
+  if (elegida && !sigue){ estado.fecha = null; estado.hora = null; }
 }
 
 function renderHorarios(){
   const cont = $("times");
   cont.innerHTML = "";
   if (!estado.fecha){
-    $("timesNote").textContent = "Elegí primero un día.";
+    $("timesNote").textContent = conectado ? "Elegí primero un día." : "Cargando...";
     return;
   }
   const f = estado.fecha;
@@ -547,9 +523,7 @@ function renderHorarios(){
     const fuera  = t < desde || t > hasta;
 
     const b = document.createElement("button");
-    b.type = "button";
-    b.className = "time";
-    b.textContent = hr.txt;
+    b.type = "button"; b.className = "time"; b.textContent = hr.txt;
     b.setAttribute("aria-pressed", "false");
 
     if (tomado || fuera){
@@ -573,20 +547,33 @@ function renderHorarios(){
 }
 
 function completo(){
-  return estado.zonas.size > 0 && estado.fecha && estado.hora
+  return conectado && !estado.enviando
+      && estado.zonas.size > 0 && estado.fecha && estado.hora
       && $("nombre").value.trim().length >= 2
-      && ($("tel").value.replace(/\D/g, "").length >= 8);
+      && $("tel").value.replace(/\D/g, "").length >= 8;
 }
 
 function renderResumen(){
   const txt = $("summaryText"), cta = $("cta");
+
+  if (!conectado){
+    txt.textContent = "No pude conectarme a la agenda.";
+    cta.setAttribute("aria-disabled", "true");
+    return;
+  }
+  if (estado.enviando){
+    txt.textContent = "Reservando...";
+    cta.setAttribute("aria-disabled", "true");
+    return;
+  }
+
   const partes = [];
   if (estado.zonas.size) partes.push(`<b>${estado.zonas.size}</b> zona${estado.zonas.size === 1 ? "" : "s"}`);
   if (estado.fecha)      partes.push(`<b>${textoFecha(estado.fecha, fmtDia)}</b>`);
   if (estado.hora)       partes.push(`<b>${estado.hora.txt}</b>`);
 
   if (!partes.length){
-    txt.innerHTML = "Elegí zonas, día y horario.";
+    txt.textContent = "Elegí zonas, día y horario.";
   } else if (!completo()){
     const falta = [];
     if (!estado.zonas.size) falta.push("zonas");
@@ -600,10 +587,11 @@ function renderResumen(){
   cta.setAttribute("aria-disabled", completo() ? "false" : "true");
 }
 
+/* ---------- reservar ---------- */
 function mensaje(){
   const f = estado.fecha;
   return [
-    `Hola ${CONFIG.nombre}, quiero reservar un turno.`,
+    `Hola ${CONFIG.nombre}, acabo de reservar un turno.`,
     "",
     `Fecha: ${textoFecha(f, fmtLargo)}`,
     `Hora: ${estado.hora.txt}`,
@@ -614,21 +602,86 @@ function mensaje(){
   ].filter(l => l !== null).join("\n");
 }
 
-function reservar(){
+function mostrarResultado({ ok, titulo, texto, url }){
+  const caja = $("done");
+  caja.hidden = false;
+  caja.classList.toggle("fallo", !ok);
+  $("doneTitle").textContent = titulo;
+  $("doneMsg").textContent = texto;
+  $("doneLinkWrap").hidden = !url;
+  if (url) $("doneLink").href = url;
+  caja.scrollIntoView({ behavior:"smooth", block:"center" });
+}
+
+async function reservar(){
+  if (estado.enviando) return;
+
   if (!completo()){
-    if (!estado.zonas.size)      { $("zones").scrollIntoView({ behavior: "smooth", block: "center" }); return; }
-    if (!estado.fecha)           { $("dates").scrollIntoView({ behavior: "smooth", block: "center" }); return; }
-    if (!estado.hora)            { $("times").scrollIntoView({ behavior: "smooth", block: "center" }); return; }
+    if (!conectado) return;
+    if (!estado.zonas.size){ $("zones").scrollIntoView({behavior:"smooth", block:"center"}); return; }
+    if (!estado.fecha)     { $("dates").scrollIntoView({behavior:"smooth", block:"center"}); return; }
+    if (!estado.hora)      { $("times").scrollIntoView({behavior:"smooth", block:"center"}); return; }
     const vacio = $("nombre").value.trim().length < 2 ? $("nombre") : $("tel");
     vacio.focus();
-    vacio.scrollIntoView({ behavior: "smooth", block: "center" });
+    vacio.scrollIntoView({ behavior:"smooth", block:"center" });
     return;
   }
+
+  estado.enviando = true;
+  renderResumen();
+
+  const f = estado.fecha;
+  const fila = {
+    fecha:    claveDia(f),
+    hora:     estado.hora.txt,
+    zonas:    [...estado.zonas],
+    nombre:   $("nombre").value.trim(),
+    telefono: $("tel").value.trim(),
+    nota:     $("nota").value.trim() || null
+  };
+
+  const { error } = await sb.from("turnos").insert(fila);
+
+  estado.enviando = false;
+
+  if (error){
+    // 23505 = la base rechazó el turno porque ese horario ya estaba tomado.
+    const tomado = error.code === "23505";
+    if (tomado){
+      ocupados.add(claveSlot(f, estado.hora));
+      estado.hora = null;
+      renderFechas(); renderHorarios();
+      mostrarResultado({
+        ok: false,
+        titulo: "Ese horario se acaba de ocupar",
+        texto: "Alguien lo reservó hace un momento. Ya lo saqué de la lista: elegí otro horario y volvé a intentar."
+      });
+    } else {
+      mostrarResultado({
+        ok: false,
+        titulo: "No pude guardar el turno",
+        texto: "Hubo un problema de conexión. Probá de nuevo en un minuto, o escribime directo por WhatsApp.",
+        url: `https://wa.me/${CONFIG.whatsapp}`
+      });
+    }
+    renderResumen();
+    return;
+  }
+
   const url = `https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(mensaje())}`;
-  $("doneLink").href = url;
-  $("done").hidden = false;
+  ocupados.add(claveSlot(f, estado.hora));
+
+  mostrarResultado({
+    ok: true,
+    titulo: "Turno reservado",
+    texto: `${textoFecha(f, fmtLargo)} a las ${estado.hora.txt}. El horario ya quedó bloqueado a tu nombre. Te abrí WhatsApp para que me avises.`,
+    url
+  });
+
   window.open(url, "_blank", "noopener");
-  $("done").scrollIntoView({ behavior: "smooth", block: "center" });
+
+  estado.hora = null;
+  renderFechas(); renderHorarios(); renderResumen();
 }
 
 /* ---------- arranque ---------- */
@@ -639,40 +692,33 @@ function aplicarMarca(){
   document.title = "Turnos · " + CONFIG.nombre;
 }
 
-function iniciar(){
+async function iniciar(){
   aplicarMarca();
   renderZonas();
+  renderResumen();
+
+  try {
+    await cargarAgenda();
+  } catch (e){
+    conectado = false;
+    const al = $("alerta");
+    al.hidden = false;
+    al.innerHTML =
+      "<strong>No pude cargar la agenda</strong>" +
+      "No puedo mostrarte los horarios disponibles en este momento. " +
+      `Escribime directo por WhatsApp al <a href="https://wa.me/${CONFIG.whatsapp}" target="_blank" rel="noopener">${CONFIG.whatsappVisible}</a> y te doy turno a mano.`;
+  }
+
   renderFechas();
   renderHorarios();
   renderResumen();
+
   $("cta").addEventListener("click", reservar);
   $("form").addEventListener("submit", e => { e.preventDefault(); reservar(); });
   ["nombre", "tel"].forEach(id => $(id).addEventListener("input", renderResumen));
 }
 
 iniciar();
-
-/* La agenda de horarios tomados se carga después, para que la página
-   se vea completa desde el primer momento aunque el archivo no exista. */
-fetch("agenda.json", { cache: "no-store" })
-  .then(r => r.ok ? r.json() : null)
-  .then(data => {
-    if (!data) return;
-    if (Array.isArray(data.ocupados))     ocupados     = new Set(data.ocupados);
-    if (Array.isArray(data.diasCerrados)) diasCerrados = new Set(data.diasCerrados);
-    if (Array.isArray(data.diasExtra))    diasExtra    = data.diasExtra;
-
-    if (typeof data.aviso === "string" && data.aviso.trim()){
-      const el = $("aviso");
-      el.textContent = data.aviso.trim();
-      el.hidden = false;
-    }
-
-    renderFechas();     // conserva el día elegido si todavía tiene lugar
-    renderHorarios();   // y el horario, si no se ocupó mientras tanto
-    renderResumen();
-  })
-  .catch(() => { /* sin agenda.json la página funciona con todo libre */ });
 </script>
 
 </body>

@@ -1,167 +1,109 @@
-# Turnos · Depi Nath
+# Depi Nath · turnos
 
-Página de reservas. La clienta elige zonas, día y horario, y al confirmar se le
-abre WhatsApp con el mensaje ya escrito hacia +54 9 11 6251-1587.
+Dos páginas:
 
-Son dos archivos:
+| | Para qué | Link |
+|---|---|---|
+| `index.html` | La que ven tus clientas | **depi-nath.netlify.app** |
+| `panel.html` | Tu agenda privada | **depi-nath.netlify.app/panel.html** |
 
-- `index.html` — la página. Casi nunca la vas a tocar.
-- `agenda.json` — **el archivo del día a día.** Acá marcás horarios tomados,
-  cerrás un sábado, abrís uno extra o ponés un cartel de aviso.
-
----
-
-## 1. Subirla a GitHub (una sola vez)
-
-1. Entrá a <https://github.com> con la cuenta **Oriivane**.
-2. Arriba a la derecha, el botón **+** → **New repository**.
-3. En *Repository name* poné: `turnos`
-4. Dejá marcado **Public** y creá el repositorio con **Create repository**.
-5. En la pantalla que aparece, tocá **uploading an existing file**.
-6. Arrastrá ahí `index.html` y `agenda.json`.
-7. Abajo, tocá **Commit changes**.
-
-## 2. Encender la página (una sola vez)
-
-1. En el repositorio, pestaña **Settings**.
-2. Menú de la izquierda, **Pages**.
-3. En *Branch* elegí `main`, carpeta `/ (root)`, y tocá **Save**.
-4. Esperá uno o dos minutos y recargá. Arriba va a aparecer tu link:
-
-   **https://oriivane.github.io/turnos/**
-
-Ese es el link que pegás en la bio de Instagram y mandás por WhatsApp.
+Los turnos se guardan en Supabase. **El horario se bloquea solo** en el momento
+en que una clienta reserva: ya no hay que marcar nada a mano.
 
 ---
 
-## 3. El día a día: editar `agenda.json`
+## Cómo funciona ahora
 
-Siempre es el mismo gesto:
+1. La clienta entra al link, elige zonas, día y horario, y pone sus datos.
+2. Al tocar **Reservar**, el turno se guarda y **ese horario desaparece al
+   instante** para todas las demás. Si dos personas tocan el botón en el mismo
+   segundo, una entra y a la otra le aparece un cartel pidiéndole que elija otro.
+3. Se le abre WhatsApp con el mensaje ya escrito hacia tu número.
+4. Vos entrás a tu panel, ves el turno como **Sin confirmar**, le respondés por
+   WhatsApp y lo marcás **Confirmar**.
 
-1. En GitHub, abrí `agenda.json`.
-2. Tocá el lápiz (**Edit this file**).
-3. Escribí el cambio.
-4. Abajo, **Commit changes**.
-
-La página se actualiza sola en menos de un minuto.
-
-**Las reglas de escritura, que son las mismas para todo:**
-
-- Las fechas se escriben `AAAA-MM-DD` → el 17 de octubre de 2026 es `2026-10-17`.
-- Las horas se escriben `HH:MM` con dos dígitos → las nueve y veinte son `09:20`.
-- Todo va **entre comillas**, y si hay más de uno **se separan con coma**.
-- El último de la lista **no lleva coma**.
-
-### Marcar un horario como tomado
-
-```json
-"ocupados": [
-  "2026-10-17 09:20",
-  "2026-10-17 09:40",
-  "2026-11-07 15:00"
-],
-```
-
-### Cerrar un sábado entero
-
-Si te enfermás, viajás o simplemente no vas a atender ese día. El día entero
-desaparece de la página; no hace falta listar los horarios.
-
-```json
-"diasCerrados": [
-  "2026-11-07"
-],
-```
-
-### Abrir un sábado extra
-
-Si querés atender un sábado que no es el primero ni el tercero.
-
-```json
-"diasExtra": [
-  "2026-10-24"
-],
-```
-
-### Poner un cartel de aviso
-
-Aparece arriba de todo, en rosa. Sirve para vacaciones, cambio de dirección,
-una promo, lo que sea.
-
-```json
-"aviso": "Del 20 de diciembre al 5 de enero no atiendo. Vuelvo el sábado 17 de enero."
-```
-
-Para sacarlo, dejalo vacío: `"aviso": ""`
-
-### Las cuatro cosas juntas
-
-Así se ve el archivo completo con todo usado a la vez:
-
-```json
-{
-  "ocupados": [
-    "2026-10-17 09:20",
-    "2026-10-17 09:40"
-  ],
-  "diasCerrados": [
-    "2026-11-07"
-  ],
-  "diasExtra": [
-    "2026-10-24"
-  ],
-  "aviso": "En noviembre atiendo solo el 21."
-}
-```
-
-> **Importante:** este archivo lo puede leer cualquiera que entre a tu
-> repositorio. Poné solo fechas y horas, nunca nombres ni teléfonos de clientas.
-
-Cuando los turnos ya pasaron podés borrar esas líneas para mantenerlo corto,
-aunque no hace falta: la página ignora sola todo lo que quedó atrás.
-
-**Si te equivocás escribiendo** (una coma de más, una comilla que falta), la
-página no se rompe: vuelve a mostrar la agenda normal con todo libre. Lo vas a
-notar porque reaparece un horario que ya habías tomado. Corregís y listo.
+Confirmar o no confirmar no cambia la disponibilidad: el horario queda ocupado
+desde que la clienta reserva. Es solo para que vos sepas a quién ya le
+contestaste.
 
 ---
 
-## 4. Cambios de fondo: editar `index.html`
+## Tu panel
 
-Esto es para cuando cambia algo estable del negocio, no para el día a día.
-Está todo junto al final del archivo, en el bloque que dice `const CONFIG = {`.
+Entrás en **depi-nath.netlify.app/panel.html** con el mail y la contraseña que
+creaste en Supabase. Cualquiera puede llegar a esa dirección, pero sin tu
+contraseña no ve nada.
 
-| Qué querés cambiar | Qué línea |
+**Turnos.** Agrupados por día, con tres filtros: *Próximos*, *Todos*, *Pasados*.
+De cada turno ves la hora, el nombre, el teléfono, las zonas y la nota.
+
+- **WhatsApp** — te abre el chat con esa clienta.
+- **Confirmar** — lo marcás como atendido por vos.
+- **Cancelar** — **libera el horario** para que otra clienta lo pueda tomar.
+- **Borrar** — lo saca de la lista para siempre. Aparece solo en los cancelados.
+
+**Días.** Elegís una fecha y:
+
+- *Cerrar ese día* — un sábado que no vas a atender. Desaparece entero de la página.
+- *Abrir ese día* — un sábado extra, fuera del primero y el tercero.
+
+Para deshacerlo, tocá la **×** del chip.
+
+**Cartel de aviso.** El texto que aparece arriba de todo en la página de
+reservas. Vacío = no se muestra.
+
+---
+
+## Lo que ya no hace falta
+
+`agenda.json` quedó sin uso: todo eso ahora lo manejás desde el panel. Podés
+borrarlo del repositorio o dejarlo, da igual.
+
+---
+
+## Si algo falla
+
+**La página dice "No pude cargar la agenda".** Supabase pausa los proyectos
+gratuitos que pasan una semana entera sin actividad. Entrá a supabase.com y
+tocá **Restore**. Tarda un par de minutos.
+
+Mientras esté así, la página no deja reservar y le muestra a la clienta tu
+WhatsApp para que te escriba directo. No se pierde ningún turno de los que ya
+tenías: siguen guardados.
+
+**No podés entrar al panel.** Revisá el mail y la contraseña. Si estás segura de
+que son correctos, en Supabase → **Authentication** → **Users** abrí tu usuario
+y fijate que esté confirmado.
+
+---
+
+## Cambios de fondo
+
+Los días que atendés, los horarios, las zonas y tu número están juntos al final
+de `index.html`, en el bloque `const CONFIG = {`.
+
+| Qué cambiar | Qué línea |
 |---|---|
-| Nombre y bajada | `nombre` y `bajada` |
-| Número de WhatsApp | `whatsapp` (solo dígitos) y `whatsappVisible` |
-| Qué día de la semana atendés | `diaSemana` — 0 domingo, 1 lunes … 6 sábado |
+| Nombre y bajada | `nombre`, `bajada` |
+| Tu WhatsApp | `whatsapp` (solo dígitos) y `whatsappVisible` |
+| Día de la semana | `diaSemana` — 0 domingo … 6 sábado |
 | Qué semanas del mes | `semanasDelMes` — `[1, 3]` es primer y tercer |
-| Horario de atención | `horaDesde` y `horaHasta` |
-| Cada cuántos minutos | `intervaloMin` |
+| Horario de atención | `horaDesde`, `horaHasta` |
+| Duración del turno | `intervaloMin` |
 | Anticipación mínima | `anticipacionHoras` |
 | Hasta cuándo se abren turnos | `mesesAdelante` |
-| Las zonas del listado | `zonas` |
+| Las zonas | `zonas` |
 
-Ejemplos:
-
-- Atender **todos** los sábados: `semanasDelMes: [1, 2, 3, 4, 5]`
-- Atender el **segundo y cuarto** sábado: `semanasDelMes: [2, 4]`
-- Agregar una zona: escribila entre comillas dentro del grupo que corresponda,
-  separada con coma.
+Las dos páginas tienen arriba la dirección y la clave de Supabase. Esa clave es
+pública a propósito: sola no sirve para nada, porque los permisos de la base son
+los que protegen los datos.
 
 ---
 
-## 5. Lo que esta página no hace
+## Lo que sigue sin hacer
 
-Vale tenerlo claro para que no te sorprenda:
-
-- **El horario no se bloquea solo.** Se bloquea cuando vos lo agregás a
-  `agenda.json`. Si dos clientas piden el mismo horario en el mismo rato, te van
-  a llegar los dos mensajes y le pedís a una que elija otro.
-- **No manda recordatorios.** Los mensajes salen de tu WhatsApp, a mano.
+- **No manda recordatorios automáticos.** Los mensajes salen de tu WhatsApp.
 - **No cobra señas.**
-
-Las tres cosas se resuelven agregándole una base de datos gratuita por detrás.
-Si el volumen de turnos lo justifica, se hace sobre esto mismo sin rehacer la
-página.
+- **Cualquiera puede reservar sin verificar quién es.** Si alguna vez te llenan
+  la agenda de turnos falsos, se puede agregar una verificación. Mientras tanto,
+  los cancelás desde el panel y el horario se libera.

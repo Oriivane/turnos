@@ -1,0 +1,530 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Agenda · Depi Nath</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marcellus&family=Karla:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+
+<style>
+/* Layout: panel de trabajo. Barra superior fija, la agenda en tarjetas
+   apiladas por día, y abajo los ajustes de días y aviso. */
+:root{
+  --bg:#F7F5F6; --surface:#FFFFFF; --surface-2:#FBF9FA;
+  --line:#E4DCDF; --ink:#221C1F; --muted:#7C6E73;
+  --accent:#8E3B55; --accent-ink:#FFFFFF; --accent-soft:#F4E7EC;
+  --ok:#2F6B4F; --ok-soft:#E8F1EC;
+  --mal:#9B2C2C; --mal-soft:#FBEAEA;
+  --f-display:"Marcellus", Georgia, serif;
+  --f-body:"Karla", "Segoe UI", system-ui, sans-serif;
+  --f-mono:"IBM Plex Mono", ui-monospace, "Consolas", monospace;
+  --r:12px;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#171315; --surface:#211B1F; --surface-2:#1C1719;
+    --line:#352B30; --ink:#F1EAEC; --muted:#A3949A;
+    --accent:#E890A8; --accent-ink:#2A121B; --accent-soft:#37222B;
+    --ok:#74C79B; --ok-soft:#1F2F26;
+    --mal:#F09A9A; --mal-soft:#331E1E;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#171315; --surface:#211B1F; --surface-2:#1C1719;
+  --line:#352B30; --ink:#F1EAEC; --muted:#A3949A;
+  --accent:#E890A8; --accent-ink:#2A121B; --accent-soft:#37222B;
+  --ok:#74C79B; --ok-soft:#1F2F26;
+  --mal:#F09A9A; --mal-soft:#331E1E;
+  color-scheme:dark;
+}
+
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg); color:var(--ink); font-family:var(--f-body); font-size:16px; line-height:1.5; -webkit-font-smoothing:antialiased}
+[hidden]{display:none !important}
+
+.topbar{
+  position:sticky; top:env(safe-area-inset-top, 0px); z-index:10;
+  background:var(--surface); border-bottom:1px solid var(--line);
+  padding:12px 20px; display:flex; align-items:center; gap:12px; flex-wrap:wrap;
+}
+.topbar h1{font-family:var(--f-display); font-weight:400; font-size:1.15rem; margin:0; flex:1 1 auto; min-width:0}
+.topbar .quien{font-size:.75rem; color:var(--muted); font-family:var(--f-mono)}
+
+.wrap{max-width:760px; margin:0 auto; padding-inline:20px; padding-block:28px 60px}
+
+/* ---- Botones ---- */
+button{font-family:inherit}
+.btn{
+  font-size:.82rem; font-weight:600; border-radius:9px; padding:8px 14px;
+  background:var(--surface); color:var(--ink); border:1px solid var(--line); cursor:pointer;
+}
+.btn:hover{border-color:var(--accent)}
+.btn-pri{background:var(--accent); color:var(--accent-ink); border-color:var(--accent)}
+.btn-mal{color:var(--mal); border-color:var(--mal)}
+.btn-ok{color:var(--ok); border-color:var(--ok)}
+.btn[disabled]{opacity:.5; cursor:not-allowed}
+.btn-sm{font-size:.75rem; padding:6px 11px}
+
+/* ---- Login ---- */
+.login{max-width:360px; margin:60px auto; background:var(--surface); border:1px solid var(--line); border-radius:var(--r); padding:28px}
+.login h2{font-family:var(--f-display); font-weight:400; font-size:1.4rem; margin:0 0 6px}
+.login p{color:var(--muted); font-size:.875rem; margin:0 0 22px}
+.campo{display:grid; gap:6px; margin-bottom:16px}
+.campo label{font-size:.8rem; font-weight:600}
+.campo input, .campo textarea, .campo select{
+  font-family:inherit; font-size:1rem; color:var(--ink); background:var(--surface-2);
+  border:1px solid var(--line); border-radius:10px; padding:11px 13px; width:100%;
+}
+.campo input:focus, .campo textarea:focus, .campo select:focus{outline:none; border-color:var(--accent)}
+.error{color:var(--mal); font-size:.85rem; margin:10px 0 0}
+
+/* ---- Secciones ---- */
+section{margin-bottom:38px}
+.sec-head{display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:4px}
+h2.sec{font-family:var(--f-display); font-weight:400; font-size:1.25rem; margin:0}
+.sec-note{color:var(--muted); font-size:.85rem; margin:0 0 16px}
+
+.tabs{display:flex; gap:7px; margin-bottom:18px; flex-wrap:wrap}
+.tab{
+  font-size:.8rem; border-radius:999px; padding:7px 15px; cursor:pointer;
+  background:var(--surface); border:1px solid var(--line); color:var(--ink);
+}
+.tab[aria-pressed="true"]{background:var(--accent); border-color:var(--accent); color:var(--accent-ink); font-weight:600}
+
+/* ---- Día ---- */
+.dia{margin-bottom:26px}
+.dia-tit{
+  font-family:var(--f-display); font-size:1.02rem; font-weight:400;
+  margin:0 0 10px; padding-bottom:7px; border-bottom:1px solid var(--line);
+  display:flex; justify-content:space-between; align-items:baseline; gap:10px;
+}
+.dia-tit span{font-family:var(--f-mono); font-size:.72rem; color:var(--muted); flex:none}
+
+/* ---- Turno ---- */
+.turno{
+  background:var(--surface); border:1px solid var(--line); border-radius:var(--r);
+  padding:14px 16px; margin-bottom:9px;
+  display:grid; grid-template-columns:auto 1fr; gap:4px 16px; align-items:start;
+}
+.turno .hora{
+  font-family:var(--f-mono); font-size:1rem; font-variant-numeric:tabular-nums;
+  font-weight:500; grid-row:1 / span 2; padding-top:2px;
+}
+.turno .quien{font-weight:600; font-size:.95rem; display:flex; align-items:center; gap:8px; flex-wrap:wrap}
+.turno .detalle{font-size:.84rem; color:var(--muted)}
+.turno .detalle .zonas{color:var(--ink)}
+.turno .nota{font-size:.84rem; color:var(--ink); background:var(--surface-2); border-radius:8px; padding:7px 10px; margin-top:7px}
+.turno .acciones{grid-column:1 / -1; display:flex; gap:7px; flex-wrap:wrap; margin-top:11px}
+.turno.cancelado{opacity:.55}
+.turno.cancelado .quien{text-decoration:line-through}
+
+.pill{font-size:.66rem; text-transform:uppercase; letter-spacing:.1em; font-weight:700; border-radius:999px; padding:3px 9px; flex:none}
+.pill-pend{background:var(--accent-soft); color:var(--accent)}
+.pill-conf{background:var(--ok-soft); color:var(--ok)}
+.pill-canc{background:var(--mal-soft); color:var(--mal)}
+
+.vacio{background:var(--surface-2); border:1px dashed var(--line); border-radius:var(--r); padding:24px; color:var(--muted); font-size:.9rem}
+.vacio strong{display:block; color:var(--ink); margin-bottom:5px}
+
+/* ---- Días bloqueados ---- */
+.lista-dias{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px}
+.dia-chip{
+  display:inline-flex; align-items:center; gap:9px;
+  background:var(--surface); border:1px solid var(--line); border-radius:999px;
+  padding:7px 8px 7px 15px; font-size:.84rem; font-family:var(--f-mono);
+}
+.dia-chip.cerrado{border-color:var(--mal)}
+.dia-chip.extra{border-color:var(--ok)}
+.dia-chip button{background:none; border:0; color:var(--muted); cursor:pointer; font-size:1.05rem; line-height:1; padding:0 5px}
+.dia-chip button:hover{color:var(--mal)}
+
+.fila{display:flex; gap:10px; align-items:flex-end; flex-wrap:wrap}
+.fila .campo{margin-bottom:0}
+
+.toast{
+  position:fixed; left:50%; transform:translateX(-50%);
+  bottom:calc(22px + env(safe-area-inset-bottom, 0px)); z-index:50;
+  background:var(--ink); color:var(--bg); font-size:.86rem; font-weight:500;
+  padding:11px 20px; border-radius:999px; max-width:calc(100vw - 40px);
+}
+
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+@media (prefers-reduced-motion: reduce){ *{transition:none !important} }
+</style>
+</head>
+<body>
+
+<!-- ===== Login ===== -->
+<div id="vistaLogin" hidden>
+  <div class="wrap">
+    <form class="login" id="formLogin">
+      <h2>Agenda de Depi Nath</h2>
+      <p>Entrá con el mail y la contraseña que creaste en Supabase.</p>
+      <div class="campo">
+        <label for="mail">Mail</label>
+        <input id="mail" type="email" autocomplete="username" required>
+      </div>
+      <div class="campo">
+        <label for="pass">Contraseña</label>
+        <input id="pass" type="password" autocomplete="current-password" required>
+      </div>
+      <button class="btn btn-pri" type="submit" id="btnEntrar" style="width:100%; padding:12px">Entrar</button>
+      <p class="error" id="loginError" hidden></p>
+    </form>
+  </div>
+</div>
+
+<!-- ===== Panel ===== -->
+<div id="vistaPanel" hidden>
+  <div class="topbar">
+    <h1>Agenda</h1>
+    <span class="quien" id="quien"></span>
+    <button class="btn btn-sm" id="btnRecargar" type="button">Actualizar</button>
+    <button class="btn btn-sm" id="btnSalir" type="button">Salir</button>
+  </div>
+
+  <div class="wrap">
+
+    <section>
+      <div class="sec-head"><h2 class="sec">Turnos</h2></div>
+      <p class="sec-note" id="resumenTurnos">Cargando...</p>
+      <div class="tabs" id="filtros">
+        <button class="tab" type="button" data-f="proximos" aria-pressed="true">Próximos</button>
+        <button class="tab" type="button" data-f="todos"    aria-pressed="false">Todos</button>
+        <button class="tab" type="button" data-f="pasados"  aria-pressed="false">Pasados</button>
+      </div>
+      <div id="agenda"></div>
+    </section>
+
+    <section>
+      <div class="sec-head"><h2 class="sec">Días</h2></div>
+      <p class="sec-note">Cerrá un sábado que no vayas a atender, o abrí uno extra fuera del primero y el tercero.</p>
+      <div class="lista-dias" id="listaDias"></div>
+      <form class="fila" id="formDia">
+        <div class="campo">
+          <label for="diaFecha">Fecha</label>
+          <input id="diaFecha" type="date" required>
+        </div>
+        <div class="campo">
+          <label for="diaTipo">Qué hago</label>
+          <select id="diaTipo">
+            <option value="cerrado">Cerrar ese día</option>
+            <option value="extra">Abrir ese día</option>
+          </select>
+        </div>
+        <button class="btn btn-pri" type="submit">Agregar</button>
+      </form>
+    </section>
+
+    <section>
+      <div class="sec-head"><h2 class="sec">Cartel de aviso</h2></div>
+      <p class="sec-note">Aparece arriba de todo en la página de reservas. Dejalo vacío para que no se vea.</p>
+      <form id="formAviso">
+        <div class="campo">
+          <label for="avisoTxt">Texto</label>
+          <textarea id="avisoTxt" rows="2" placeholder="Del 20 de diciembre al 5 de enero no atiendo."></textarea>
+        </div>
+        <button class="btn btn-pri" type="submit">Guardar</button>
+      </form>
+    </section>
+
+  </div>
+</div>
+
+<div class="toast" id="toast" hidden></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script>
+/* Los mismos dos datos que en index.html */
+const CONFIG = {
+  supabaseUrl: "https://qcistptgeqskkstljuqx.supabase.co",
+  supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFjaXN0cHRnZXFza2tzdGxqdXF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTEzMTU0NzMsImV4cCI6MjEwNjg5MTQ3M30.c2Wl77-j_U5cLNUEPwDy-MbLTDer4CByt485LrcM1dw",
+  paisWhatsapp: "549"   // Argentina, para armar el link a la clienta
+};
+
+const sb = supabase.createClient(CONFIG.supabaseUrl, CONFIG.supabaseKey);
+const $ = id => document.getElementById(id);
+
+let turnos = [], dias = [], filtro = "proximos";
+
+/* ---------- formato ---------- */
+const fmtDia = new Intl.DateTimeFormat("es-AR", { weekday:"long", day:"numeric", month:"long", timeZone:"UTC" });
+function textoFecha(iso){
+  const [y, m, d] = iso.split("-").map(Number);
+  const s = fmtDia.format(new Date(Date.UTC(y, m - 1, d)));
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+const hhmm = h => String(h).slice(0, 5);
+const hoyISO = () => {
+  const n = new Date(Date.now() - 3 * 3600 * 1000);   // hora de Argentina
+  return n.toISOString().slice(0, 10);
+};
+
+/* Arma el link de WhatsApp hacia la clienta. Es un intento razonable
+   sobre números argentinos; el número tal cual lo escribió siempre se
+   muestra al lado por si hace falta marcarlo a mano. */
+function waClienta(tel){
+  let d = String(tel).replace(/\D/g, "");
+  if (d.startsWith("54")) return d;
+  d = d.replace(/^0/, "");
+  d = d.replace(/^(\d{2,4})15/, "$1");
+  return CONFIG.paisWhatsapp + d;
+}
+
+let toastT;
+function aviso(txt){
+  const t = $("toast");
+  t.textContent = txt; t.hidden = false;
+  clearTimeout(toastT);
+  toastT = setTimeout(() => { t.hidden = true; }, 3200);
+}
+
+/* ---------- datos ---------- */
+async function cargar(){
+  const [t, d, c] = await Promise.all([
+    sb.from("turnos").select("*").order("fecha").order("hora"),
+    sb.from("dias").select("*").order("fecha"),
+    sb.from("config").select("valor").eq("clave", "aviso").maybeSingle()
+  ]);
+  if (t.error) { aviso("No pude cargar los turnos"); return; }
+  turnos = t.data || [];
+  dias   = d.data || [];
+  $("avisoTxt").value = (c.data && c.data.valor) || "";
+  render();
+}
+
+/* ---------- render ---------- */
+function render(){
+  renderTurnos();
+  renderDias();
+}
+
+function renderTurnos(){
+  const cont = $("agenda");
+  const hoy = hoyISO();
+
+  let lista = turnos;
+  if (filtro === "proximos") lista = turnos.filter(t => t.fecha >= hoy && t.estado !== "cancelado");
+  if (filtro === "pasados")  lista = turnos.filter(t => t.fecha <  hoy);
+
+  const activos = turnos.filter(t => t.fecha >= hoy && t.estado !== "cancelado");
+  const pend    = activos.filter(t => t.estado === "pendiente").length;
+  $("resumenTurnos").textContent =
+    activos.length === 0
+      ? "No tenés turnos próximos."
+      : `${activos.length} turno${activos.length === 1 ? "" : "s"} próximo${activos.length === 1 ? "" : "s"}` +
+        (pend ? ` · ${pend} sin confirmar` : " · todos confirmados");
+
+  cont.innerHTML = "";
+
+  if (!lista.length){
+    const v = document.createElement("div");
+    v.className = "vacio";
+    v.innerHTML = "<strong>Nada para mostrar acá</strong>" +
+      (filtro === "proximos"
+        ? "Cuando una clienta reserve desde la página, el turno aparece solo."
+        : "Probá con otro filtro.");
+    cont.appendChild(v);
+    return;
+  }
+
+  const porDia = new Map();
+  for (const t of lista){
+    if (!porDia.has(t.fecha)) porDia.set(t.fecha, []);
+    porDia.get(t.fecha).push(t);
+  }
+
+  for (const [fecha, items] of porDia){
+    const bloque = document.createElement("div");
+    bloque.className = "dia";
+
+    const tit = document.createElement("h3");
+    tit.className = "dia-tit";
+    tit.innerHTML = `${textoFecha(fecha)} <span>${items.length} turno${items.length === 1 ? "" : "s"}</span>`;
+    bloque.appendChild(tit);
+
+    for (const t of items) bloque.appendChild(tarjetaTurno(t));
+    cont.appendChild(bloque);
+  }
+}
+
+function tarjetaTurno(t){
+  const el = document.createElement("div");
+  el.className = "turno" + (t.estado === "cancelado" ? " cancelado" : "");
+
+  const pill = { pendiente:["pill-pend","Sin confirmar"], confirmado:["pill-conf","Confirmado"], cancelado:["pill-canc","Cancelado"] }[t.estado];
+
+  const hora = document.createElement("div");
+  hora.className = "hora";
+  hora.textContent = hhmm(t.hora);
+
+  const quien = document.createElement("div");
+  quien.className = "quien";
+  quien.append(document.createTextNode(t.nombre));
+  const p = document.createElement("span");
+  p.className = "pill " + pill[0];
+  p.textContent = pill[1];
+  quien.appendChild(p);
+
+  const det = document.createElement("div");
+  det.className = "detalle";
+  det.innerHTML = `<span class="zonas">${(t.zonas || []).join(", ") || "sin zonas"}</span><br>${t.telefono}`;
+
+  el.append(hora, quien, det);
+
+  if (t.nota){
+    const n = document.createElement("div");
+    n.className = "nota";
+    n.textContent = t.nota;
+    n.style.gridColumn = "2";
+    el.appendChild(n);
+  }
+
+  const acc = document.createElement("div");
+  acc.className = "acciones";
+
+  const wa = document.createElement("a");
+  wa.className = "btn btn-sm";
+  wa.href = `https://wa.me/${waClienta(t.telefono)}`;
+  wa.target = "_blank"; wa.rel = "noopener";
+  wa.textContent = "WhatsApp";
+  wa.style.textDecoration = "none";
+  acc.appendChild(wa);
+
+  if (t.estado !== "confirmado") acc.appendChild(boton("Confirmar", "btn-ok",  () => cambiarEstado(t, "confirmado")));
+  if (t.estado !== "cancelado")  acc.appendChild(boton("Cancelar",  "btn-mal", () => cambiarEstado(t, "cancelado")));
+  if (t.estado === "cancelado")  acc.appendChild(boton("Borrar",    "btn-mal", () => borrar(t)));
+
+  el.appendChild(acc);
+  return el;
+}
+
+function boton(txt, cls, fn){
+  const b = document.createElement("button");
+  b.type = "button";
+  b.className = "btn btn-sm " + cls;
+  b.textContent = txt;
+  b.addEventListener("click", async () => { b.disabled = true; await fn(); });
+  return b;
+}
+
+async function cambiarEstado(t, estado){
+  const { error } = await sb.from("turnos").update({ estado }).eq("id", t.id);
+  if (error){ aviso("No se pudo guardar"); render(); return; }
+  aviso(estado === "confirmado"
+    ? "Turno confirmado"
+    : "Turno cancelado · el horario quedó libre otra vez");
+  await cargar();
+}
+
+async function borrar(t){
+  const { error } = await sb.from("turnos").delete().eq("id", t.id);
+  if (error){ aviso("No se pudo borrar"); render(); return; }
+  aviso("Turno borrado");
+  await cargar();
+}
+
+function renderDias(){
+  const cont = $("listaDias");
+  cont.innerHTML = "";
+  const hoy = hoyISO();
+  const futuros = dias.filter(d => d.fecha >= hoy);
+
+  if (!futuros.length){
+    const p = document.createElement("span");
+    p.style.cssText = "color:var(--muted); font-size:.86rem";
+    p.textContent = "No tenés ningún día cerrado ni agregado.";
+    cont.appendChild(p);
+    return;
+  }
+
+  for (const d of futuros){
+    const c = document.createElement("span");
+    c.className = "dia-chip " + d.tipo;
+    c.append(document.createTextNode(`${d.fecha} · ${d.tipo === "cerrado" ? "cerrado" : "abierto"}`));
+    const x = document.createElement("button");
+    x.type = "button"; x.textContent = "×"; x.title = "Quitar";
+    x.addEventListener("click", async () => {
+      x.disabled = true;
+      const { error } = await sb.from("dias").delete().eq("fecha", d.fecha);
+      if (error){ aviso("No se pudo quitar"); x.disabled = false; return; }
+      aviso("Listo"); await cargar();
+    });
+    c.appendChild(x);
+    cont.appendChild(c);
+  }
+}
+
+/* ---------- formularios ---------- */
+$("formDia").addEventListener("submit", async e => {
+  e.preventDefault();
+  const fecha = $("diaFecha").value, tipo = $("diaTipo").value;
+  if (!fecha) return;
+  const { error } = await sb.from("dias").upsert({ fecha, tipo });
+  if (error){ aviso("No se pudo guardar"); return; }
+  $("diaFecha").value = "";
+  aviso(tipo === "cerrado" ? "Día cerrado" : "Día abierto");
+  await cargar();
+});
+
+$("formAviso").addEventListener("submit", async e => {
+  e.preventDefault();
+  const valor = $("avisoTxt").value.trim();
+  const { error } = await sb.from("config").upsert({ clave:"aviso", valor });
+  if (error){ aviso("No se pudo guardar"); return; }
+  aviso(valor ? "Cartel guardado" : "Cartel sacado");
+});
+
+$("filtros").addEventListener("click", e => {
+  const b = e.target.closest(".tab");
+  if (!b) return;
+  filtro = b.dataset.f;
+  $("filtros").querySelectorAll(".tab").forEach(t => t.setAttribute("aria-pressed", t === b ? "true" : "false"));
+  renderTurnos();
+});
+
+$("btnRecargar").addEventListener("click", async () => { await cargar(); aviso("Actualizado"); });
+$("btnSalir").addEventListener("click", async () => { await sb.auth.signOut(); mostrar(null); });
+
+/* ---------- sesión ---------- */
+$("formLogin").addEventListener("submit", async e => {
+  e.preventDefault();
+  const b = $("btnEntrar"), err = $("loginError");
+  b.disabled = true; err.hidden = true;
+
+  const { error } = await sb.auth.signInWithPassword({
+    email: $("mail").value.trim(),
+    password: $("pass").value
+  });
+
+  b.disabled = false;
+  if (error){
+    err.hidden = false;
+    err.textContent = /invalid/i.test(error.message)
+      ? "El mail o la contraseña no coinciden."
+      : "No pude entrar: " + error.message;
+  }
+});
+
+function mostrar(sesion){
+  $("vistaPanel").hidden = !sesion;
+  $("vistaLogin").hidden = !!sesion;
+  if (sesion){
+    $("quien").textContent = sesion.user.email;
+    $("pass").value = "";
+    cargar();
+  }
+}
+
+sb.auth.onAuthStateChange((_evento, sesion) => mostrar(sesion));
+sb.auth.getSession().then(({ data }) => mostrar(data.session));
+</script>
+
+</body>
+</html>
