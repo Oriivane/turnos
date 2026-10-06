@@ -1,0 +1,18 @@
+{
+  "_ayuda": "Las fechas van siempre como AAAA-MM-DD y las horas como HH:MM, entre comillas y separadas por coma. Este archivo lo puede leer cualquiera: no pongas nunca nombres ni telefonos de clientas.",
+
+  "_ocupados": "Horarios sueltos ya reservados. Ejemplo: \"2026-10-17 09:20\"",
+  "ocupados": [
+  ],
+
+  "_diasCerrados": "Sabados que NO vas a atender, enteros. Ejemplo: \"2026-11-07\"",
+  "diasCerrados": [
+  ],
+
+  "_diasExtra": "Sabados extra, fuera del primero y el tercero. Ejemplo: \"2026-10-24\"",
+  "diasExtra": [
+  ],
+
+  "_aviso": "Cartel que aparece arriba de la pagina. Dejalo en \"\" para que no se vea.",
+  "aviso": ""
+}
