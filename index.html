@@ -211,6 +211,10 @@ img{max-width:100%}
 .done p{margin:0 0 10px; font-size:.9rem; color:var(--ink)}
 .done p:last-child{margin-bottom:0}
 .done a{color:var(--accent); font-weight:600}
+.done .llevar{
+  font-weight:600; background:var(--surface); border-radius:9px;
+  padding:10px 13px; border-left:3px solid var(--accent);
+}
 .fallo{background:var(--mal-soft); border-color:var(--mal)}
 
 footer{padding-block:30px 40px; text-align:center; font-size:.78rem; color:var(--muted)}
@@ -295,6 +299,7 @@ footer .ref{font-size:.74rem}
     <div id="done" class="done" hidden>
       <h3 id="doneTitle">Turno reservado</h3>
       <p id="doneMsg"></p>
+      <p id="doneLlevar" class="llevar" hidden></p>
       <p id="doneLinkWrap">Si WhatsApp no se abrió solo, <a id="doneLink" href="#" target="_blank" rel="noopener">tocá acá para mandarme el mensaje</a>.</p>
     </div>
   </section>
@@ -328,6 +333,8 @@ const CONFIG = {
   direccion: "Av. San Martín 3530, Paternal, CABA",
   // Referencia para encontrar la puerta: timbre, color del portón, piso.
   referencia: "Piso 6, depto A",
+  // Qué tiene que traer la clienta. Dejalo en "" si no querés que aparezca.
+  queLlevar: "No te olvides de traer tu maquinita de afeitar y una toalla. ¡Nos vemos!",
 
   // --- Conexión con la base de datos -------------------------
   supabaseUrl: "https://qcistptgeqskkstljuqx.supabase.co",
@@ -632,10 +639,13 @@ function mensaje(){
     $("nota").value.trim() ? `Nota: ${$("nota").value.trim()}` : null
   ].filter(l => l !== null);
 
-  // La dirección queda en el chat de la clienta, para que no tenga que pedirla.
+  // La dirección y qué traer quedan en el chat de la clienta, para que no
+  // tenga que preguntarlo después.
   if (CONFIG.direccion){
     lineas.push("", `Dirección: ${CONFIG.direccion}` + (CONFIG.referencia ? ` (${CONFIG.referencia})` : ""));
   }
+  if (CONFIG.queLlevar) lineas.push("", CONFIG.queLlevar);
+
   return lineas.join("\n");
 }
 
@@ -645,6 +655,8 @@ function mostrarResultado({ ok, titulo, texto, url }){
   caja.classList.toggle("fallo", !ok);
   $("doneTitle").textContent = titulo;
   $("doneMsg").textContent = texto;
+  $("doneLlevar").textContent = CONFIG.queLlevar || "";
+  $("doneLlevar").hidden = !(ok && CONFIG.queLlevar);
   $("doneLinkWrap").hidden = !url;
   if (url) $("doneLink").href = url;
   caja.scrollIntoView({ behavior:"smooth", block:"center" });

@@ -280,6 +280,7 @@ const CONFIG = {
   nombre:    "Depi Nath",
   direccion:  "Av. San Martín 3530, Paternal, CABA",  // va en el recordatorio
   referencia: "Piso 6, depto A",
+  queLlevar:  "No te olvides de traer tu maquinita de afeitar y una toalla.",
 
   supabaseUrl: "https://qcistptgeqskkstljuqx.supabase.co",
   supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFjaXN0cHRnZXFza2tzdGxqdXF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTEzMTU0NzMsImV4cCI6MjEwNjg5MTQ3M30.c2Wl77-j_U5cLNUEPwDy-MbLTDer4CByt485LrcM1dw",
@@ -382,6 +383,7 @@ function mensajeRecordatorio(t, fecha){
   if (CONFIG.direccion){
     lineas.push("", "Dirección: " + CONFIG.direccion + (CONFIG.referencia ? " (" + CONFIG.referencia + ")" : ""));
   }
+  if (CONFIG.queLlevar) lineas.push("", CONFIG.queLlevar);
   lineas.push("", "Si no podés venir avisame así libero el horario. ¡Te espero!");
   return lineas.join("\n");
 }
