@@ -215,6 +215,9 @@ img{max-width:100%}
 
 footer{padding-block:30px 40px; text-align:center; font-size:.78rem; color:var(--muted)}
 footer .wa{font-family:var(--f-mono); color:var(--ink)}
+footer a{color:var(--accent); font-weight:600; text-decoration:none}
+footer a:hover{text-decoration:underline}
+footer .ref{font-size:.74rem}
 
 :focus-visible{outline:2px solid var(--accent); outline-offset:2px}
 @media (prefers-reduced-motion: reduce){ *{transition:none !important; animation:none !important} }
@@ -303,6 +306,7 @@ footer .wa{font-family:var(--f-mono); color:var(--ink)}
 
   <footer>
     <p>Depi Nath · Depilación definitiva</p>
+    <p id="footDir" hidden><a id="footDirLink" href="#" target="_blank" rel="noopener"></a><br><span id="footRef" class="ref"></span></p>
     <p>WhatsApp <span class="wa" id="footWa"></span></p>
   </footer>
 
@@ -319,6 +323,11 @@ const CONFIG = {
 
   whatsapp:        "5491162511587",   // solo dígitos, con código de país
   whatsappVisible: "+54 9 11 6251-1587",
+
+  // Dirección del centro. Dejala en "" si no querés mostrarla.
+  direccion: "Av. San Martín 3530, Paternal, CABA",
+  // Referencia para encontrar la puerta: timbre, color del portón, piso.
+  referencia: "Piso 6, depto A",
 
   // --- Conexión con la base de datos -------------------------
   supabaseUrl: "https://qcistptgeqskkstljuqx.supabase.co",
@@ -393,7 +402,8 @@ const fmtDow   = new Intl.DateTimeFormat("es-AR", { weekday:"long", timeZone:"UT
 const fmtDia   = new Intl.DateTimeFormat("es-AR", { day:"numeric", month:"long", timeZone:"UTC" });
 
 function textoFecha(f, fmt){
-  const s = fmt.format(new Date(Date.UTC(f.y, f.m, f.d)));
+  // es-AR devuelve "sábado, 17 de octubre"; sacamos la coma del día.
+  const s = fmt.format(new Date(Date.UTC(f.y, f.m, f.d))).replace(/^(\S+),/, "$1");
   return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
@@ -611,7 +621,7 @@ function renderResumen(){
 /* ---------- reservar ---------- */
 function mensaje(){
   const f = estado.fecha;
-  return [
+  const lineas = [
     `Hola ${CONFIG.nombre}, acabo de reservar un turno.`,
     "",
     `Fecha: ${textoFecha(f, fmtLargo)}`,
@@ -620,7 +630,13 @@ function mensaje(){
     `Nombre: ${$("nombre").value.trim()}`,
     `Teléfono: ${$("tel").value.trim()}`,
     $("nota").value.trim() ? `Nota: ${$("nota").value.trim()}` : null
-  ].filter(l => l !== null).join("\n");
+  ].filter(l => l !== null);
+
+  // La dirección queda en el chat de la clienta, para que no tenga que pedirla.
+  if (CONFIG.direccion){
+    lineas.push("", `Dirección: ${CONFIG.direccion}` + (CONFIG.referencia ? ` (${CONFIG.referencia})` : ""));
+  }
+  return lineas.join("\n");
 }
 
 function mostrarResultado({ ok, titulo, texto, url }){
@@ -692,10 +708,14 @@ async function reservar(){
   const url = `https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(mensaje())}`;
   ocupados.add(claveSlot(f, estado.hora));
 
+  const donde = CONFIG.direccion
+    ? ` Te espero en ${CONFIG.direccion}${CONFIG.referencia ? " (" + CONFIG.referencia + ")" : ""}.`
+    : "";
+
   mostrarResultado({
     ok: true,
     titulo: "Turno reservado",
-    texto: `${textoFecha(f, fmtLargo)} a las ${estado.hora.txt}. El horario ya quedó bloqueado a tu nombre. Te abrí WhatsApp para que me avises.`,
+    texto: `${textoFecha(f, fmtLargo)} a las ${estado.hora.txt}. El horario ya quedó bloqueado a tu nombre.${donde} Te abrí WhatsApp para que me avises.`,
     url
   });
 
@@ -741,6 +761,14 @@ function aplicarMarca(){
   $("brandTag").textContent  = CONFIG.bajada;
   $("footWa").textContent    = CONFIG.whatsappVisible;
   document.title = "Turnos · " + CONFIG.nombre;
+
+  if (CONFIG.direccion){
+    $("footDir").hidden = false;
+    const a = $("footDirLink");
+    a.textContent = CONFIG.direccion;
+    a.href = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(CONFIG.direccion);
+    $("footRef").textContent = CONFIG.referencia || "";
+  }
 }
 
 async function iniciar(){

@@ -133,6 +133,19 @@ h2.sec{font-family:var(--f-display); font-weight:400; font-size:1.25rem; margin:
 .vacio strong{display:block; color:var(--ink); margin-bottom:5px}
 
 /* ---- Días bloqueados ---- */
+/* ---- Recordatorios ---- */
+.record{
+  background:var(--surface); border:1px solid var(--line); border-radius:var(--r);
+  padding:11px 14px; margin-bottom:8px;
+  display:flex; align-items:center; gap:14px; flex-wrap:wrap;
+}
+.record .hora{font-family:var(--f-mono); font-size:.95rem; font-variant-numeric:tabular-nums; font-weight:500; flex:none}
+.record .nom{flex:1 1 120px; min-width:0; font-weight:600; font-size:.92rem}
+.record .tel{font-family:var(--f-mono); font-size:.76rem; color:var(--muted)}
+.record.avisado{opacity:.55}
+.record .tic{color:var(--ok); font-weight:700; font-size:.76rem; flex:none}
+.record a.btn{text-decoration:none}
+
 .lista-dias{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px}
 .dia-chip{
   display:inline-flex; align-items:center; gap:9px;
@@ -206,6 +219,12 @@ h2.sec{font-family:var(--f-display); font-weight:400; font-size:1.25rem; margin:
 
   <div class="wrap">
 
+    <section id="secRecord">
+      <div class="sec-head"><h2 class="sec">Recordatorios</h2></div>
+      <p class="sec-note" id="recordNota">Cargando...</p>
+      <div id="recordLista"></div>
+    </section>
+
     <section>
       <div class="sec-head"><h2 class="sec">Turnos</h2></div>
       <p class="sec-note" id="resumenTurnos">Cargando...</p>
@@ -256,8 +275,12 @@ h2.sec{font-family:var(--f-display); font-weight:400; font-size:1.25rem; margin:
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script>
-/* Los mismos dos datos que en index.html */
+/* Los mismos datos que en index.html: si cambiás uno, cambialo en los dos. */
 const CONFIG = {
+  nombre:    "Depi Nath",
+  direccion:  "Av. San Martín 3530, Paternal, CABA",  // va en el recordatorio
+  referencia: "Piso 6, depto A",
+
   supabaseUrl: "https://qcistptgeqskkstljuqx.supabase.co",
   supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFjaXN0cHRnZXFza2tzdGxqdXF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTEzMTU0NzMsImV4cCI6MjEwNjg5MTQ3M30.c2Wl77-j_U5cLNUEPwDy-MbLTDer4CByt485LrcM1dw",
   paisWhatsapp: "549"   // Argentina, para armar el link a la clienta
@@ -272,7 +295,8 @@ let turnos = [], dias = [], filtro = "proximos";
 const fmtDia = new Intl.DateTimeFormat("es-AR", { weekday:"long", day:"numeric", month:"long", timeZone:"UTC" });
 function textoFecha(iso){
   const [y, m, d] = iso.split("-").map(Number);
-  const s = fmtDia.format(new Date(Date.UTC(y, m - 1, d)));
+  // es-AR devuelve "sábado, 17 de octubre"; sacamos la coma del día.
+  const s = fmtDia.format(new Date(Date.UTC(y, m - 1, d))).replace(/^(\S+),/, "$1");
   return s.charAt(0).toUpperCase() + s.slice(1);
 }
 const hhmm = h => String(h).slice(0, 5);
@@ -316,8 +340,111 @@ async function cargar(){
 
 /* ---------- render ---------- */
 function render(){
+  renderRecordatorios();
   renderTurnos();
   renderDias();
+}
+
+/* ---------- recordatorios ----------
+   Muestra la próxima jornada con turnos y, al lado de cada clienta, un
+   botón que abre TU WhatsApp con el mensaje ya escrito. */
+
+function mananaISO(){
+  const n = new Date(Date.now() - 3 * 3600 * 1000 + 24 * 3600 * 1000);
+  return n.toISOString().slice(0, 10);
+}
+const DIAS_ANTES = 3;   // desde cuántos días antes aparecen los botones
+
+function diasHasta(iso){
+  const [y, m, d] = iso.split("-").map(Number);
+  const [hy, hm, hd] = hoyISO().split("-").map(Number);
+  return Math.round((Date.UTC(y, m - 1, d) - Date.UTC(hy, hm - 1, hd)) / 86400000);
+}
+
+const AVISADOS_KEY = "depinath-avisados";
+function avisados(){
+  try { return new Set(JSON.parse(localStorage.getItem(AVISADOS_KEY) || "[]")); }
+  catch (e) { return new Set(); }
+}
+function marcarAvisado(id){
+  try {
+    const s = avisados(); s.add(id);
+    localStorage.setItem(AVISADOS_KEY, JSON.stringify([...s]));
+  } catch (e) {}
+}
+
+function mensajeRecordatorio(t, fecha){
+  const cuando = fecha === mananaISO() ? "mañana" : "el " + textoFecha(fecha).toLowerCase();
+  const nombre = t.nombre.trim().split(/\s+/)[0];
+  const lineas = [
+    `Hola ${nombre}! Te recuerdo tu turno ${cuando} a las ${hhmm(t.hora)} en ${CONFIG.nombre}.`
+  ];
+  if (CONFIG.direccion){
+    lineas.push("", "Dirección: " + CONFIG.direccion + (CONFIG.referencia ? " (" + CONFIG.referencia + ")" : ""));
+  }
+  lineas.push("", "Si no podés venir avisame así libero el horario. ¡Te espero!");
+  return lineas.join("\n");
+}
+
+function renderRecordatorios(){
+  const nota = $("recordNota"), cont = $("recordLista");
+  cont.innerHTML = "";
+
+  const hoy = hoyISO();
+  const activos = turnos.filter(t => t.fecha >= hoy && t.estado !== "cancelado");
+
+  if (!activos.length){
+    nota.textContent = "No tenés turnos próximos, así que no hay nada para recordar.";
+    return;
+  }
+
+  const fecha = activos[0].fecha;
+  const items = activos.filter(t => t.fecha === fecha);
+  const faltan = diasHasta(fecha);
+
+  if (faltan > DIAS_ANTES){
+    nota.textContent =
+      `Tu próxima jornada es ${textoFecha(fecha).toLowerCase()}, con ${items.length} turno${items.length === 1 ? "" : "s"}. ` +
+      `Los botones para avisarles aparecen acá ${DIAS_ANTES} días antes.`;
+    return;
+  }
+
+  const cuando = fecha === mananaISO() ? "Mañana" : (faltan === 0 ? "Hoy" : textoFecha(fecha));
+  nota.textContent = `${cuando}: ${items.length} turno${items.length === 1 ? "" : "s"}. Tocá el botón de cada una y mandale el mensaje.`;
+
+  const ya = avisados();
+
+  for (const t of items){
+    const fila = document.createElement("div");
+    fila.className = "record" + (ya.has(t.id) ? " avisado" : "");
+
+    const h = document.createElement("span");
+    h.className = "hora"; h.textContent = hhmm(t.hora);
+
+    const n = document.createElement("span");
+    n.className = "nom";
+    n.append(document.createTextNode(t.nombre));
+    const tel = document.createElement("span");
+    tel.className = "tel"; tel.textContent = " · " + t.telefono;
+    n.appendChild(tel);
+
+    const a = document.createElement("a");
+    a.className = "btn btn-sm btn-pri";
+    a.href = `https://wa.me/${waClienta(t.telefono)}?text=${encodeURIComponent(mensajeRecordatorio(t, fecha))}`;
+    a.target = "_blank"; a.rel = "noopener";
+    a.textContent = ya.has(t.id) ? "Volver a avisar" : "Avisar";
+    a.addEventListener("click", () => { marcarAvisado(t.id); setTimeout(renderRecordatorios, 400); });
+
+    fila.append(h, n, a);
+
+    if (ya.has(t.id)){
+      const tic = document.createElement("span");
+      tic.className = "tic"; tic.textContent = "✓ avisada";
+      fila.insertBefore(tic, a);
+    }
+
+    cont.appendChild(fila);
+  }
 }
 
 function renderTurnos(){
